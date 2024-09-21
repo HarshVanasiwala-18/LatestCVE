@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Vulnerability Radar: Stay Ahead of the Threats</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Ensure that the CVE ID is visible properly */
+        .cve-id-column {
+            width: 25%;
+            word-wrap: break-word;
+        }
+        .references-column {
+            width: 40%;
+            word-wrap: break-word;
+        }
+        .date-column {
+            width: 20%;
+        }
+        .origin-column {
+            width: 15%;
+        }
+        .datetime {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">Cyber Vulnerability Radar: Stay Ahead of the Threats</h1>
+        <div class="datetime" id="current-datetime"></div>
+        
+        <!-- Search Form -->
+        <form class="form-inline my-3" method="get">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search by CVE ID" aria-label="Search" name="search" value="{{ search_query }}">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+
+        <!-- CVEs Table -->
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th class="cve-id-column">CVE ID</th>
+                    <th class="date-column">Date</th>
+                    <th class="references-column">References</th>
+                    <th class="origin-column">Origin</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cve in cve_entries %}
+                <tr>
+                    <!-- Link CVE ID to the NVD website -->
+                    <td class="cve-id-column">
+                        <a href="https://nvd.nist.gov/vuln/detail/{{ cve.CVE_ID }}" target="_blank">{{ cve.CVE_ID }}</a>
+                    </td>
+                    <td class="date-column">{{ cve.Date }}</td>
+                    <td class="references-column">
+                        <ul>
+                            {% for ref in cve.References %}
+                            <li><a href="{{ ref }}" target="_blank">{{ ref }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td class="origin-column">{{ ', '.join(cve.Origin) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <nav aria-label="Page navigation">
+            {{ pagination.links }}
+        </nav>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Display the current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+            document.getElementById('current-datetime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        // Call updateDateTime on page load
+        updateDateTime();
+        // Update the date and time every second
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+</html>
